@@ -44,6 +44,35 @@ See [ROADMAP.md](./ROADMAP.md) for future planned features.
 
 Try it out [here](https://mini-qr-code-generator.vercel.app/) ✨
 
+## URL design parameters
+
+MiniQR can prefill the QR code data and visual design from readable URL query parameters. These
+parameters are applied when the app loads. After that, users can still choose another preset or edit
+the design in the UI. Reloading the same URL applies the URL parameters again.
+
+Examples:
+
+```text
+/?preset=Plain
+/?preset=sp-digital
+/?data=https%3A%2F%2Fexample.com&preset=Plain
+/?preset=Plain&dotColor=ff0000&cornerSquareColor=00ff00&cornerDotColor=0000ff&bg=ffffff
+```
+
+Supported parameters:
+
+| Parameter            | Description                                                                 |
+| -------------------- | --------------------------------------------------------------------------- |
+| `data`               | QR code content. URLs and special characters should be URL-encoded.         |
+| `preset`             | Preset name, matched by exact name or slug-like value such as `sp-digital`. |
+| `dotColor`           | QR dot color. Hex values may omit `#`.                                      |
+| `cornerSquareColor`   | Corner square color. Hex values may omit `#`.                                |
+| `cornerDotColor`     | Corner dot color. Hex values may omit `#`.                                   |
+| `bg`                 | QR background color, or `transparent`.                                       |
+
+URL parameters override the initial preset/local storage only for that page load. They are not
+Base64-encoded.
+
 <details>
 
 <summary>Frame text included in batch export (added in v0.17.0)</summary>

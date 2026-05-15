@@ -57,6 +57,10 @@ import {
   type QRCodeConfig,
   type QRCodeFrameConfig
 } from '@/utils/useQRCodeStorage'
+import {
+  findPresetByUrlValue,
+  getUrlQRCodeSettings
+} from '@/utils/urlQRCodeConfig'
 import { useMediaQuery } from '@vueuse/core'
 import JSZip from 'jszip'
 import TextExportModal from '@/components/TextExportModal.vue'
@@ -76,6 +80,9 @@ const props = defineProps<{
   initialData?: string
 }>()
 
+const urlQRCodeSettings = getUrlQRCodeSettings()
+const urlPreset = findPresetByUrlValue(allQrCodePresets, urlQRCodeSettings.preset)
+
 const mainContentContainer = ref<HTMLElement | null>(null)
 const isLarge = useMediaQuery('(min-width: 768px)')
 const isLikelyMobileDevice = computed(() => {
@@ -87,7 +94,9 @@ const { t, locale } = useI18n()
 //#endregion
 
 //#region /* QR code style settings */
-const data = ref(props.initialData || import.meta.env.VITE_DEFAULT_DATA_TO_ENCODE || '')
+const data = ref(
+  props.initialData || urlQRCodeSettings.data || import.meta.env.VITE_DEFAULT_DATA_TO_ENCODE || ''
+)
 const debouncedData = ref(data.value)
 const previewData = computed(() =>
   debouncedData.value?.length > 0 ? debouncedData.value : defaultQRCodeText.value
@@ -273,11 +282,13 @@ watch(selectedPreset, () => {
   // Most presets don't have a frame, so we set it to false by default
 })
 
-const selectedPresetKey = ref<string>(
-  isLocalStorageEnabled() && hasStoredQRConfig()
-    ? LAST_LOADED_LOCALLY_PRESET_KEY
-    : defaultPreset.name
-)
+function getInitialSelectedPresetKey() {
+  if (urlPreset) return urlPreset.name
+  if (isLocalStorageEnabled() && hasStoredQRConfig()) return LAST_LOADED_LOCALLY_PRESET_KEY
+  return defaultPreset.name
+}
+
+const selectedPresetKey = ref<string>(getInitialSelectedPresetKey())
 const lastCustomLoadedPreset = ref<Preset>()
 watch(
   selectedPresetKey,
@@ -670,6 +681,24 @@ function applyQRConfigFromJsonString(jsonString: string, key?: string) {
   }
 }
 
+function applyUrlColor(color: string | undefined, target: typeof dotsOptionsColor) {
+  if (color === undefined) return
+  target.value = color
+}
+
+function applyUrlBackground(background: string | undefined) {
+  if (background === undefined) return
+  if (background === 'transparent') {
+    lastBackground.value = styleBackground.value
+    styleBackground.value = 'transparent'
+    includeBackground.value = false
+    return
+  }
+  includeBackground.value = true
+  styleBackground.value = background
+  lastBackground.value = background
+}
+
 function loadQrConfigFromFile() {
   console.debug('Loading QR code config from file')
   const fileInput = document.createElement('input')
@@ -702,7 +731,10 @@ watch(
 )
 
 onMounted(() => {
-  if (isLocalStorageEnabled()) {
+  if (urlPreset) {
+    selectedPreset.value = urlPreset
+    selectedPresetKey.value = urlPreset.name
+  } else if (isLocalStorageEnabled()) {
     const storedConfig = loadQRConfig()
     if (storedConfig) {
       applyQRConfig(storedConfig, LAST_LOADED_LOCALLY_PRESET_KEY)
@@ -712,12 +744,18 @@ onMounted(() => {
     }
   }
 
-  // Set initial data if provided through props
   if (props.initialData) {
     data.value = props.initialData
+  } else if (urlQRCodeSettings.data !== undefined) {
+    data.value = urlQRCodeSettings.data
   } else if (data.value.trim() === '') {
     data.value = defaultQRCodeText.value
   }
+
+  applyUrlColor(urlQRCodeSettings.dotsColor, dotsOptionsColor)
+  applyUrlColor(urlQRCodeSettings.cornersSquareColor, cornersSquareOptionsColor)
+  applyUrlColor(urlQRCodeSettings.cornersDotColor, cornersDotOptionsColor)
+  applyUrlBackground(urlQRCodeSettings.background)
 })
 //#endregion
 

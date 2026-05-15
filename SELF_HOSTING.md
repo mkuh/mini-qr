@@ -170,6 +170,22 @@ Useful when embedding MiniQR in a branded context where users should always see 
 DEFAULT_PRESET=plain DISABLE_LOCAL_STORAGE=true docker compose up -d --build
 ```
 
+### Runtime design from URL parameters
+
+For one-off links or embeds, QR data and design can be set with readable URL query parameters. This
+does not require rebuilding the app and does not require Base64-encoded config.
+
+```text
+https://your-domain.example/?data=https%3A%2F%2Fexample.com&preset=Plain
+https://your-domain.example/?preset=Plain&dotColor=ff0000&cornerSquareColor=00ff00&cornerDotColor=0000ff&bg=ffffff
+```
+
+The URL parameters are applied when the page loads. Users can still choose another design in the UI
+after the page has loaded; refreshing the same URL applies the URL parameters again. If no design
+parameters are present, MiniQR uses the normal localStorage/default preset behavior.
+
+Common parameters are `preset`, `data`, `dotColor`, `cornerSquareColor`, `cornerDotColor`, and `bg`.
+
 ### Hide footer credits
 
 ```bash
