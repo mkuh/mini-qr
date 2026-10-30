@@ -59,6 +59,7 @@ import {
   isLocalStorageEnabled,
   LAST_LOADED_LOCALLY_PRESET_KEY,
   LOADED_FROM_FILE_PRESET_KEY,
+  LOADED_FROM_URL_PRESET_KEY,
   loadQRConfig,
   loadSimpleFields,
   loadViewMode,
@@ -612,7 +613,8 @@ const defaultQRCodeText = computed(() => t('Have nice day!'))
 const lastCustomLoadedFramePreset = ref<FramePreset>()
 const CUSTOM_LOADED_FRAME_PRESET_KEYS = [
   LAST_LOADED_LOCALLY_PRESET_KEY,
-  LOADED_FROM_FILE_PRESET_KEY
+  LOADED_FROM_FILE_PRESET_KEY,
+  LOADED_FROM_URL_PRESET_KEY
 ]
 
 const allFramePresetOptions = computed(() => {
@@ -1024,6 +1026,11 @@ onMounted(() => {
       viewMode.value = loadViewMode() ?? 'full'
       simpleFields.value = loadSimpleFields()
     }
+  }
+
+  const urlConfig = new URLSearchParams(window.location.search).get('qrConfig')
+  if (urlConfig) {
+    applyQRConfigFromJsonString(urlConfig, LOADED_FROM_URL_PRESET_KEY, { restoreData: true })
   }
 
   // Env-configured fields force a simple, fixed view.

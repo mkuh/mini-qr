@@ -8,6 +8,7 @@ import {
   QR_CODE_STORAGE_KEY,
   LAST_LOADED_LOCALLY_PRESET_KEY,
   LOADED_FROM_FILE_PRESET_KEY,
+  LOADED_FROM_URL_PRESET_KEY,
   CUSTOM_LOADED_PRESET_KEYS,
   QR_VIEW_MODE_STORAGE_KEY,
   QR_SIMPLE_FIELDS_STORAGE_KEY,
@@ -75,8 +76,10 @@ describe('Constants', () => {
   it('exports the correct preset keys', () => {
     expect(LAST_LOADED_LOCALLY_PRESET_KEY).toBe('Last saved locally')
     expect(LOADED_FROM_FILE_PRESET_KEY).toBe('Loaded from file')
+    expect(LOADED_FROM_URL_PRESET_KEY).toBe('URL')
     expect(CUSTOM_LOADED_PRESET_KEYS).toContain(LAST_LOADED_LOCALLY_PRESET_KEY)
     expect(CUSTOM_LOADED_PRESET_KEYS).toContain(LOADED_FROM_FILE_PRESET_KEY)
+    expect(CUSTOM_LOADED_PRESET_KEYS).toContain(LOADED_FROM_URL_PRESET_KEY)
   })
 })
 

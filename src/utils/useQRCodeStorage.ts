@@ -23,9 +23,11 @@ export interface QRCodeConfig {
 export const QR_CODE_STORAGE_KEY = 'qrCodeConfig'
 export const LAST_LOADED_LOCALLY_PRESET_KEY = 'Last saved locally'
 export const LOADED_FROM_FILE_PRESET_KEY = 'Loaded from file'
+export const LOADED_FROM_URL_PRESET_KEY = 'URL'
 export const CUSTOM_LOADED_PRESET_KEYS = [
   LAST_LOADED_LOCALLY_PRESET_KEY,
-  LOADED_FROM_FILE_PRESET_KEY
+  LOADED_FROM_FILE_PRESET_KEY,
+  LOADED_FROM_URL_PRESET_KEY
 ] as const
 
 export function isLocalStorageEnabled(): boolean {

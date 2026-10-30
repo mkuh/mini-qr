@@ -94,6 +94,16 @@ https://github.com/lyqht/mini-qr/assets/35736525/991b2d7e-f168-4354-9091-1678d2c
 
 For full self-hosting instructions including Docker setup, environment variables, custom presets, and deployment scenarios, see [SELF_HOSTING.md](SELF_HOSTING.md).
 
+## Load a QR config from a URL
+
+Pass the same JSON produced by **Save QR Code config** as a URL-encoded `qrConfig` query parameter:
+
+```text
+https://example.com/?qrConfig=%7B%22props%22%3A...%7D
+```
+
+The URL config is validated and takes precedence over a config stored in local storage.
+
 ## Contributing
 
 [![All Contributors](https://img.shields.io/github/all-contributors/lyqht/mini-qr?color=ee8449&style=flat-square)](#contributors) [![Crowdin](https://badges.crowdin.net/miniqr/localized.svg)](https://crowdin.com/project/miniqr)
